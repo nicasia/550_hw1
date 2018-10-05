@@ -9,7 +9,7 @@ int main(int argc, char **argv)
   // Load config files, if any.
 
   // Run command loop.
-  fprintf("hi");
+  printf("hi");
 
   // Perform any shutdown/cleanup.
 
