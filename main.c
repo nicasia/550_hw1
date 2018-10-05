@@ -254,8 +254,9 @@ void lsh_loop(void)
     for (int i=0; i<PIPE_COUNT ; i++) {
       printf("%s\n", pipe_args[i]);
 
-      // args = lsh_split_line(pipe_args[i]);
-      // status = lsh_execute(args);
+      args = lsh_split_line(pipe_args[i]);
+      status = lsh_execute(args);
+      // status = 1;
     }
 
 
