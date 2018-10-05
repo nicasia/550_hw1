@@ -267,21 +267,20 @@ void lsh_loop(void)
          perror("fork");
          abort();
        } else if (pids[i] == 0) {
-         if (i == 0){
-           dup2(fd[1], 1);
-           close(fd[0]);
-           close(fd[1]);
-           // status = lsh_execute(args);
-           status = execvp(args[0], args);
-        else {
-          dup2(fd[0], 0);
-          dup2(fd[1], 1);
-          close(fd[0]);
-          close(fd[1]);
-          status = execvp(args[0], args);
-        }
-
-
+          if (i == 0){
+             dup2(fd[1], 1);
+             close(fd[0]);
+             close(fd[1]);
+             // status = lsh_execute(args);
+             status = execvp(args[0], args);
+           }
+           else {
+            dup2(fd[0], 0);
+            dup2(fd[1], 1);
+            close(fd[0]);
+            close(fd[1]);
+            status = execvp(args[0], args);
+            }
          }
         exit(0);
        }
