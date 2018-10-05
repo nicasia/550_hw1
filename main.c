@@ -252,6 +252,10 @@ void lsh_loop(void)
     pipe_args = split_by_pipe(line);
     printf("PIPE COUNT: %d\n", PIPE_COUNT);
     pid_t pids[PIPE_COUNT];
+    int fd[2];
+
+    pipe(fd);
+
     for (int i=0; i<PIPE_COUNT ; i++) {
       printf("%s\n", pipe_args[i]);
 
@@ -263,8 +267,17 @@ void lsh_loop(void)
          perror("fork");
          abort();
        } else if (pids[i] == 0) {
-         status = lsh_execute(args);
-         exit(0);
+         if (i == 0){
+           dup2(fd[1], "temp.txt");
+           close(fd[0]);
+           close(fd[1]);
+           // status = lsh_execute(args);
+
+           status = execvp(args);
+
+
+         }
+        exit(0);
        }
       }
 
