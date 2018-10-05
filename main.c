@@ -239,12 +239,14 @@ void lsh_loop(void)
 {
   char *line;
   char **args;
+  char ***pipe_args;
+
   int status;
 
   do {
     printf("> ");
     line = lsh_read_line();
-    char *pipe_args = split_by_pipe(line);
+    pipe_args = split_by_pipe(line);
     for (int i=0; i<sizeof(pipe_args); i++) {
       args = lsh_split_line(pipe_args[i]);
       printf("%s", pipe_args[i]);
