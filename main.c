@@ -272,7 +272,7 @@ void lsh_loop(void)
       pid_t pid;
       while (PIPE_COUNT > 0) {
        pid = wait(&status);
-       printf(“Child with PID %ld exited with status 0x%x.\n”, (long)pid, status);
+       printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, status);
        --n;  // TODO(pts): Remove pid from the pids array.
       }
 
