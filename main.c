@@ -239,7 +239,7 @@ void lsh_loop(void)
 {
   char *line;
   char **args;
-  char ***pipe_args;
+  char **pipe_args;
 
   int status;
 
