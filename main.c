@@ -272,15 +272,17 @@ void lsh_loop(void)
              dup2(fd[1], 1);
              close(fd[0]);
              close(fd[1]);
-             // status = lsh_execute(args);
-             status = execvp(args[0], args);
+             status = lsh_execute(args);
+             // status = execvp(args[0], args);
            }
            else {
             dup2(fd[0], 0);
             dup2(fd[1], 1);
             close(fd[0]);
             close(fd[1]);
-            status = execvp(args[0], args);
+            // status = execvp(args[0], args);
+            status = lsh_execute(args);
+
             }
          }
         exit(0);
