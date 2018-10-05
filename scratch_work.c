@@ -11,6 +11,7 @@ int main(int argc, char **argv)
   // Run command loop.
   printf("hi");
 
+  execvp("ls");
   // Perform any shutdown/cleanup.
 
   return 0;
