@@ -260,36 +260,36 @@ void lsh_loop(void)
       printf("%s\n", pipe_args[i]);
 
       args = lsh_split_line(pipe_args[i]);
-      // status = lsh_execute(args);
+      status = lsh_execute(args);
       // status = 1;
 
-       if ((pids[i] = fork()) < 0) {
-         printf("LESS THAN 0");
-         perror("fork");
-         abort();
-       }
-       else {
-         printf("WORKING");
-
-          if (i == 0){
-             dup2(fd[1], 1);
-             close(fd[0]);
-             close(fd[1]);
-             status = lsh_execute(args);
-             // status = execvp(args[0], args);
-           }
-           else {
-            dup2(fd[0], 0);
-            dup2(fd[1], 1);
-            close(fd[0]);
-            close(fd[1]);
-            // status = execvp(args[0], args);
-            status = lsh_execute(args);
-
-            }
-         }
-        exit(0);
-       }
+       // if ((pids[i] = fork()) < 0) {
+       //   printf("LESS THAN 0");
+       //   perror("fork");
+       //   abort();
+       // }
+       // else {
+       //   printf("WORKING");
+       //
+       //    if (i == 0){
+       //       dup2(fd[1], 1);
+       //       close(fd[0]);
+       //       close(fd[1]);
+       //       status = lsh_execute(args);
+       //       // status = execvp(args[0], args);
+       //     }
+       //     else {
+       //      dup2(fd[0], 0);
+       //      dup2(fd[1], 1);
+       //      close(fd[0]);
+       //      close(fd[1]);
+       //      // status = execvp(args[0], args);
+       //      status = lsh_execute(args);
+       //
+       //      }
+       //   }
+       //  exit(0);
+       // }
 
 
       /* Wait for children to exit. */
