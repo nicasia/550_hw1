@@ -69,7 +69,7 @@ int main(int argc, char **argv)
   thing[2] = NULL;
   execvp(cmd, thing);
 
-  lsh_read_line()
+  lsh_read_line();
 
 
 
