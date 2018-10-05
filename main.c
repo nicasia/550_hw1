@@ -22,6 +22,7 @@
 int lsh_cd(char **args);
 int lsh_help(char **args);
 int lsh_exit(char **args);
+int PIPE_COUNT = 0;
 
 /*
   List of builtin commands, followed by their corresponding functions.
@@ -198,6 +199,7 @@ char **split_by_pipe(char *line)
   }
   tokens[position] = NULL;
   printf("%d\n", position);
+  PIPE_COUNT = position;
   return tokens;
 }
 
@@ -248,7 +250,7 @@ void lsh_loop(void)
     printf("> ");
     line = lsh_read_line();
     pipe_args = split_by_pipe(line);
-    for (int i=0; i<sizeof(pipe_args); i++) {
+    for (int i=0; i<PIPE_COUNT ; i++) {
       printf("%s\n", pipe_args[i]);
 
       // args = lsh_split_line(pipe_args[i]);
