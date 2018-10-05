@@ -160,14 +160,47 @@ int lsh_execute(char **args)
  }
 
 #define LSH_TOK_BUFSIZE 64
-// #define LSH_TOK_DELIM " \t\r\n\a"
-#define LSH_TOK_DELIM " | \n"
+#define LSH_TOK_DELIM " \t\r\n\a"
+#define LSH_PIPE_DELIM " | \n"
 
 /**
    @brief Split a line into tokens (very naively).
    @param line The line.
    @return Null-terminated array of tokens.
  */
+
+char **split_by_pipe(char *line)
+{
+  int bufsize = LSH_TOK_BUFSIZE, position = 0;
+  char **tokens = malloc(bufsize * sizeof(char*));
+  char *token;
+
+  if (!tokens) {
+    fprintf(stderr, "lsh: allocation error\n");
+    exit(EXIT_FAILURE);
+  }
+
+  token = strtok(line, LSH_PIPE_DELIM);
+  while (token != NULL) {
+    tokens[position] = token;
+    position++;
+
+    if (position >= bufsize) {
+      bufsize += LSH_TOK_BUFSIZE;
+      tokens = realloc(tokens, bufsize * sizeof(char*));
+      if (!tokens) {
+        fprintf(stderr, "lsh: allocation error\n");
+        exit(EXIT_FAILURE);
+      }
+    }
+
+    token = strtok(NULL, LSH_TOK_DELIM);
+  }
+  tokens[position] = NULL;
+  return tokens;
+}
+
+
 char **lsh_split_line(char *line)
 {
   int bufsize = LSH_TOK_BUFSIZE, position = 0;
@@ -211,8 +244,12 @@ void lsh_loop(void)
   do {
     printf("> ");
     line = lsh_read_line();
-    args = lsh_split_line(line);
-    status = lsh_execute(args);
+    pipe_args = lsh_split_pipe(line)
+    for (i=0; i<sizeof(pipe_args); i++) {
+      args = lsh_split_line(pipe_args[i]);
+      status = lsh_execute(args);
+    }
+
 
     free(line);
     free(args);
