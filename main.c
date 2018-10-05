@@ -259,7 +259,7 @@ void lsh_loop(void)
       // status = 1;
 
        if ((pids[i] = fork()) < 0) {
-         perror(“fork”);
+         perror("fork");
          abort();
        } else if (pids[i] == 0) {
          status = lsh_execute(args);
@@ -273,7 +273,7 @@ void lsh_loop(void)
       while (PIPE_COUNT > 0) {
        pid = wait(&status);
        printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, status);
-       --n;  // TODO(pts): Remove pid from the pids array.
+       --PIPE_COUNT;  // TODO(pts): Remove pid from the pids array.
       }
 
 
