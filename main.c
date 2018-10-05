@@ -265,9 +265,12 @@ void lsh_loop(void)
 
        if ((pids[i] = fork()) < 0) {
          perror("fork");
+         printf("LESS THAN 0");
          abort();
        }
        else {
+         printf("WORKING");
+
           if (i == 0){
              dup2(fd[1], 1);
              close(fd[0]);
