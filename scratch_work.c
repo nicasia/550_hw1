@@ -19,7 +19,7 @@ int main(int argc, char **argv)
   // execvp(cmd, thing);
 
   char *cmd = "ls";
-  execvp(cmd, argv);
+  execvp(argv);
 
 
   // Perform any shutdown/cleanup.
