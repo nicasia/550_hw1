@@ -267,7 +267,7 @@ void lsh_loop(void)
          perror("fork");
          abort();
        }
-       else  (pids[i] == 0) {
+       else {
           if (i == 0){
              dup2(fd[1], 1);
              close(fd[0]);
@@ -285,7 +285,7 @@ void lsh_loop(void)
          }
         exit(0);
        }
- }
+
 
       /* Wait for children to exit. */
       int child_status;
