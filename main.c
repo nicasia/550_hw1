@@ -258,13 +258,13 @@ void lsh_loop(void)
       // status = lsh_execute(args);
       // status = 1;
       pid_t pids[PIPE_COUNT];
-      
+
        if ((pids[i] = fork()) < 0) {
          perror("fork");
          abort();
        } else if (pids[i] == 0) {
          status = lsh_execute(args);
-         exit(0);
+         // exit(0);
        }
       }
 
