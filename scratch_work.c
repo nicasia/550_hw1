@@ -19,20 +19,21 @@ int main(int argc, char **argv)
   // thing[1] = "-la";
   // thing[2] = NULL;
   // execvp(cmd, thing);
-  // 
+  //
   // char *cmd = "ls";
   // char *thing[3];
   // thing[0] = "ls";
   // thing[1] = "-la";
   // thing[2] = NULL;
   // execvp(cmd, thing);
-
-  int a;
-
-  printf("Please input an integer value: ");
-  scanf("%d", &a);
-  printf("You entered: %d\n", a);
-
+  int c;
+  while((c = getchar())!= EOF)
+  {
+   if( getchar() == EOF )
+     break;
+   printf(" %d\n", c);
+  }
+   printf("%d %u %x- at EOF\n", c , c, c);
 
 
   // Perform any shutdown/cleanup.
