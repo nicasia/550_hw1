@@ -273,7 +273,7 @@ void lsh_loop(void)
            close(fd[1]);
            // status = lsh_execute(args);
 
-           status = execvp(args);
+           status = execvp(args[0], args);
 
 
          }
