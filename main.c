@@ -197,6 +197,7 @@ char **split_by_pipe(char *line)
     token = strtok(NULL, LSH_PIPE_DELIM);
   }
   tokens[position] = NULL;
+  printf("%d\n", position);
   return tokens;
 }
 
