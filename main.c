@@ -264,7 +264,7 @@ void lsh_loop(void)
          abort();
        } else if (pids[i] == 0) {
          status = lsh_execute(args);
-         // exit(0);
+         exit(0);
        }
       }
 
