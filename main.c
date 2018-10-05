@@ -255,9 +255,26 @@ void lsh_loop(void)
       printf("%s\n", pipe_args[i]);
 
       args = lsh_split_line(pipe_args[i]);
-      status = lsh_execute(args);
+      // status = lsh_execute(args);
       // status = 1;
-    }
+
+       if ((pids[i] = fork()) < 0) {
+         perror(“fork”);
+         abort();
+       } else if (pids[i] == 0) {
+         status = lsh_execute(args);
+         exit(0);
+       }
+      }
+
+      /* Wait for children to exit. */
+      int status;
+      pid_t pid;
+      while (PIPE_COUNT > 0) {
+       pid = wait(&status);
+       printf(“Child with PID %ld exited with status 0x%x.\n”, (long)pid, status);
+       --n;  // TODO(pts): Remove pid from the pids array.
+      }
 
 
     free(line);
