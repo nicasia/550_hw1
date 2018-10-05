@@ -264,8 +264,8 @@ void lsh_loop(void)
       // status = 1;
 
        if ((pids[i] = fork()) < 0) {
-         perror("fork");
          printf("LESS THAN 0");
+         perror("fork");
          abort();
        }
        else {
