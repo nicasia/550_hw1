@@ -248,8 +248,9 @@ void lsh_loop(void)
     line = lsh_read_line();
     pipe_args = split_by_pipe(line);
     for (int i=0; i<sizeof(pipe_args); i++) {
-      args = lsh_split_line(pipe_args[i]);
       printf("%s", pipe_args[i]);
+
+      args = lsh_split_line(pipe_args[i]);
       status = lsh_execute(args);
     }
 
