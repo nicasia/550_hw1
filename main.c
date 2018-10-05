@@ -264,16 +264,16 @@ void lsh_loop(void)
          abort();
        } else if (pids[i] == 0) {
          status = lsh_execute(args);
-         // exit(0);
+         exit(0);
        }
       }
 
       /* Wait for children to exit. */
-      int status;
+      int child_status;
       pid_t pid;
       while (PIPE_COUNT > 0) {
        pid = wait(&status);
-       printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, status);
+       printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, child_status);
        --PIPE_COUNT;  // TODO(pts): Remove pid from the pids array.
       }
 
