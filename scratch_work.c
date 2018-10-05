@@ -16,7 +16,7 @@ int main(int argc, char **argv)
   argv[0] = "ls";
   argv[1] = "-la";
   argv[2] = NULL;
-
+  execvp(cmd, argv);
   // Perform any shutdown/cleanup.
 
   return 0;
