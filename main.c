@@ -251,13 +251,13 @@ void lsh_loop(void)
     line = lsh_read_line();
     pipe_args = split_by_pipe(line);
     printf("PIPE COUNT: %d\n", PIPE_COUNT);
+    pid_t pids[PIPE_COUNT];
     for (int i=0; i<PIPE_COUNT ; i++) {
       printf("%s\n", pipe_args[i]);
 
       args = lsh_split_line(pipe_args[i]);
       // status = lsh_execute(args);
       // status = 1;
-      pid_t pids[PIPE_COUNT];
 
        if ((pids[i] = fork()) < 0) {
          perror("fork");
