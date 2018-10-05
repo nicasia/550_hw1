@@ -19,19 +19,19 @@ int main(int argc, char **argv)
   // thing[1] = "-la";
   // thing[2] = NULL;
   // execvp(cmd, thing);
+  // 
+  // char *cmd = "ls";
+  // char *thing[3];
+  // thing[0] = "ls";
+  // thing[1] = "-la";
+  // thing[2] = NULL;
+  // execvp(cmd, thing);
 
-  char *cmd = "ls";
-  char *thing[3];
-  thing[0] = "ls";
-  thing[1] = "-la";
-  thing[2] = NULL;
-  execvp(cmd, thing);
+  int a;
 
-    int a;
-
-    printf("Please input an integer value: ");
-    scanf("%d", &a);
-    printf("You entered: %d\n", a);
+  printf("Please input an integer value: ");
+  scanf("%d", &a);
+  printf("You entered: %d\n", a);
 
 
 
