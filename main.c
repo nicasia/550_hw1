@@ -260,7 +260,7 @@ void lsh_loop(void)
 
 
     free(line);
-    free(args);
+    // free(args);
   } while (status);
 }
 
