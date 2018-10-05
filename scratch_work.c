@@ -12,11 +12,11 @@ int main(int argc, char **argv)
   printf("hi");
 
   char *cmd = "ls";
-  char *argv[3];
-  argv[0] = "ls";
-  argv[1] = "-la";
-  argv[2] = NULL;
-  execvp(cmd, argv);
+  char *thing[3];
+  thing[0] = "ls";
+  thing[1] = "-la";
+  thing[2] = NULL;
+  execvp(cmd, thing);
   // Perform any shutdown/cleanup.
 
   return 0;
