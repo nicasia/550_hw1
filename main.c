@@ -250,6 +250,7 @@ void lsh_loop(void)
     printf("> ");
     line = lsh_read_line();
     pipe_args = split_by_pipe(line);
+    printf("PIPE COUNT: %d\n", PIPE_COUNT);
     for (int i=0; i<PIPE_COUNT ; i++) {
       printf("%s\n", pipe_args[i]);
 
