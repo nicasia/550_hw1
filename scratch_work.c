@@ -11,7 +11,12 @@ int main(int argc, char **argv)
   // Run command loop.
   printf("hi");
 
-  execlp("ls", "");
+  char *cmd = "ls";
+  char *argv[3];
+  argv[0] = "ls";
+  argv[1] = "-la";
+  argv[2] = NULL;
+
   // Perform any shutdown/cleanup.
 
   return 0;
