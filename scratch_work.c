@@ -69,6 +69,8 @@ int main(int argc, char **argv)
   thing[2] = NULL;
   execvp(cmd, thing);
 
+  lsh_read_line()
+
 
 
   // Perform any shutdown/cleanup.
