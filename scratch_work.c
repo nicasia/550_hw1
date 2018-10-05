@@ -11,12 +11,17 @@ int main(int argc, char **argv)
   // Run command loop.
   printf("hi");
 
+  // char *cmd = "ls";
+  // char *thing[3];
+  // thing[0] = "ls";
+  // thing[1] = "-la";
+  // thing[2] = NULL;
+  // execvp(cmd, thing);
+
   char *cmd = "ls";
-  char *thing[3];
-  thing[0] = "ls";
-  thing[1] = "-la";
-  thing[2] = NULL;
-  execvp(cmd, thing);
+  execvp(cmd, argv);
+
+
   // Perform any shutdown/cleanup.
 
   return 0;
