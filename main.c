@@ -261,9 +261,8 @@ void lsh_loop(void)
 
       args = lsh_split_line(pipe_args[i]);
       status = lsh_execute(args);
-
+   
       // status = 1;
-
        // if ((pids[i] = fork()) < 0) {
        //   printf("LESS THAN 0");
        //   perror("fork");
