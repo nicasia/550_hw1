@@ -288,7 +288,7 @@ void lsh_loop(void)
        //
        //      }
        //   }
-        exit(0);
+        // exit(0);
        }
 
 
