@@ -260,7 +260,7 @@ void lsh_loop(void)
       printf("%s\n", pipe_args[i]);
 
       args = lsh_split_line(pipe_args[i]);
-      status = execvp(args[0], args)
+      status = execvp(args[0], args);
       // status = lsh_execute(args);
       // status = 1;
 
