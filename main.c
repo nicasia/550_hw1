@@ -260,9 +260,7 @@ void lsh_loop(void)
       printf("%s\n", pipe_args[i]);
 
       args = lsh_split_line(pipe_args[i]);
-      execvp(args[0], args);
-      status = 1;
-      // status = lsh_execute(args);
+      status = lsh_execute(args);
 
       // status = 1;
 
@@ -295,14 +293,14 @@ void lsh_loop(void)
        }
 
 
-      // /* Wait for children to exit. */
-      // int child_status;
-      // pid_t pid;
-      // while (PIPE_COUNT > 0) {
-      //  pid = wait(&child_status);
-      //  printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, child_status);
-      //  --PIPE_COUNT;  // TODO(pts): Remove pid from the pids array.
-      // }
+      /* Wait for children to exit. */
+      int child_status;
+      pid_t pid;
+      while (PIPE_COUNT > 0) {
+       pid = wait(&child_status);
+       printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, child_status);
+       --PIPE_COUNT;  // TODO(pts): Remove pid from the pids array.
+      }
 
 
     free(line);
