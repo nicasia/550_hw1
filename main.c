@@ -94,64 +94,7 @@ int lsh_exit(char **args)
   return 0;
 }
 
-/**
-  @brief Launch a program and wait for it to terminate.
-  @param args Null terminated list of arguments (including program).
-  @return Always returns 1, to continue execution.
- */
-int lsh_launch(char **args)
-{
-  pid_t pid, wpid;
-  int status;
 
-  pid = fork();
-  if (pid == 0) {
-    // Child process
-    if (execvp(args[0], args) == -1) {
-      perror("lsh");
-    }
-    exit(EXIT_FAILURE);
-  } else if (pid < 0) {
-    // Error forking
-    perror("lsh");
-  } else {
-    // Parent process
-    do {
-      wpid = waitpid(pid, &status, WUNTRACED);
-    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-  }
-
-  return 1;
-}
-
-/**
-   @brief Execute shell built-in or launch program.
-   @param args Null terminated list of arguments.
-   @return 1 if the shell should continue running, 0 if it should terminate
- */
-int lsh_execute(char **args)
-{
-  int i;
-
-  if (args[0] == NULL) {
-    // An empty command was entered.
-    return 1;
-  }
-
-  for (i = 0; i < lsh_num_builtins(); i++) {
-    if (strcmp(args[0], builtin_str[i]) == 0) {
-      return (*builtin_func[i])(args);
-    }
-  }
-
-  return lsh_launch(args);
-}
-
-
-/**
-   @brief Read a line of input from stdin.
-   @return The line from stdin.
- */
  char *lsh_read_line(void)
  {
    char *line = NULL;
@@ -244,63 +187,115 @@ void lsh_loop(void)
   char **args;
   char **pipe_args;
 
-  int status;
+  int status = 1;
 
   do {
     printf("> ");
     line = lsh_read_line();
     pipe_args = split_by_pipe(line);
     printf("PIPE COUNT: %d\n", PIPE_COUNT);
+    
     pid_t pids[PIPE_COUNT];
-    int fd[2];
+    int pipefd[PIPE_COUNT * 2];
 
-    pipe(fd);
+    
 
-    for (int i=0; i<PIPE_COUNT ; i++) {
-      printf("%s\n", pipe_args[i]);
+    for (int i = 0; i<PIPE_COUNT ; i++) {
 
       args = lsh_split_line(pipe_args[i]);
-      status = lsh_execute(args);
-   
-      // status = 1;
-       // if ((pids[i] = fork()) < 0) {
-       //   printf("LESS THAN 0");
-       //   perror("fork");
-       //   abort();
-       // }
-       // else {
-       //   printf("WORKING");
-       //
-       //    if (i == 0){
-       //       dup2(fd[1], 1);
-       //       close(fd[0]);
-       //       close(fd[1]);
-       //       status = lsh_execute(args);
-       //       // status = execvp(args[0], args);
-       //     }
-       //     else {
-       //      dup2(fd[0], 0);
-       //      dup2(fd[1], 1);
-       //      close(fd[0]);
-       //      close(fd[1]);
-       //      // status = execvp(args[0], args);
-       //      status = lsh_execute(args);
-       //
-       //      }
-       //   }
-        // exit(0);
-       }
+      //status = lsh_execute(args);
+
+      printf("i = %d", i);
+
+      pipe( pipefd + 2 * i );
+    
+      //Create processes for each pipe
+      if ((pids[i] = fork()) < 0) {
+
+        printf("FORK ERROR");
+        perror("fork");
+        abort();
+      } else if (pids[i] == 0) {
+
+       
+        if(PIPE_COUNT == 1){
+          execvp(args[0], args);
+          exit(0);
+        }else{
+
+          if(i == 0){
+          
+          printf("FIRST PROCESS");
+          
+          dup2(pipefd[2 * i + 1], 1);
+
+          close(pipefd[2 * i]);
+          
+          close(pipefd[2 * i + 1]);
+          execvp(args[0], args);
+          exit(0);
+
+        } else if(i == PIPE_COUNT - 1){
+
+            printf("LAST PROCESS");
+    
+            dup2(pipefd[2 * (i - 1)], 0);
+            
+            close(pipefd[2 * (i - 1) + 1]);
+            
+            close(pipefd[2 * (i - 1) ]);
+            execvp(args[0], args);
+            exit(0);
+
+        } else{
+          printf("MIDDLE PROCESS");
+          
+          dup2(pipefd[2 * (i - 1)], 0);
+          dup2(pipefd[2 * i + 1], 1);
 
 
-      /* Wait for children to exit. */
-      int child_status;
-      pid_t pid;
-      while (PIPE_COUNT > 0) {
-       pid = wait(&child_status);
-       printf("Child with PID %ld exited with status 0x%x.\n", (long)pid, child_status);
-       --PIPE_COUNT;  // TODO(pts): Remove pid from the pids array.
+          close(pipefd[2 * (i - 1) + 1]);
+          
+          close(pipefd[2 * (i - 1) ]);
+
+          
+
+          close(pipefd[2 * i]);
+          
+          close(pipefd[2 * i + 1]);
+
+          execvp(args[0], args);
+          
+          exit(0);
+          
+        }   
+
+        }
+         
+        
+        
       }
 
+       }
+
+      printf("PIPE COUNT: %d\n", PIPE_COUNT);
+     for (int i = 0; i < 2 * PIPE_COUNT ; i++) {
+          close(pipefd[i]);
+      }
+      //close(0);
+      //close(1);
+     
+
+      int n = PIPE_COUNT;
+      int child_status;
+      pid_t pid;
+      while (n > 0) {
+        pid = wait(&child_status);
+        printf("Child with PID %ld exited with status %d \n", (long)pid, child_status);
+        --n;  // TODO(pts): Remove pid from the pids array.
+       }
+
+    
 
     free(line);
     // free(args);
