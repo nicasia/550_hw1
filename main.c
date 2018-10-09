@@ -196,9 +196,11 @@ void lsh_loop(void)
     printf("PIPE COUNT: %d\n", PIPE_COUNT);
     
     pid_t pids[PIPE_COUNT];
-    int pipefd[PIPE_COUNT * 2];
+    int pipefd[2];
 
     
+
+    pipe(pipefd);
 
     for (int i = 0; i<PIPE_COUNT ; i++) {
 
@@ -207,7 +209,7 @@ void lsh_loop(void)
 
       printf("i = %d", i);
 
-      pipe( pipefd + 2 * i );
+      
     
       //Create processes for each pipe
       if ((pids[i] = fork()) < 0) {
@@ -227,11 +229,10 @@ void lsh_loop(void)
           
           printf("FIRST PROCESS");
           
-          dup2(pipefd[2 * i + 1], 1);
+          close(pipefd[0]);
+          dup2(pipefd[1], 1);
+          close(pipefd[1]);
 
-          close(pipefd[2 * i]);
-          
-          close(pipefd[2 * i + 1]);
           execvp(args[0], args);
           exit(0);
 
@@ -239,32 +240,28 @@ void lsh_loop(void)
 
             printf("LAST PROCESS");
     
-            dup2(pipefd[2 * (i - 1)], 0);
-            
-            close(pipefd[2 * (i - 1) + 1]);
-            
-            close(pipefd[2 * (i - 1) ]);
+            close(pipefd[1]);
+            dup2(pipefd[0], 0);
+            close(pipefd[0]);
             execvp(args[0], args);
             exit(0);
 
         } else{
           printf("MIDDLE PROCESS");
           
-          dup2(pipefd[2 * (i - 1)], 0);
-          dup2(pipefd[2 * i + 1], 1);
-
-
-          close(pipefd[2 * (i - 1) + 1]);
+          close(pipefd[1]);
+          close(pipefd[0]);
+          dup2(pipefd[0], 0);
           
-          close(pipefd[2 * (i - 1) ]);
-
           
-
-          close(pipefd[2 * i]);
-          
-          close(pipefd[2 * i + 1]);
-
           execvp(args[0], args);
+
+          close(pipefd[0]);
+          close(pipefd[1]);
+          dup2(pipefd[1], 1);
+          
+
+          
           
           exit(0);
           
