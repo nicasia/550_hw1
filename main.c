@@ -1,14 +1,3 @@
-/***************************************************************************//**
-
-  @file         main.c
-
-  @author       Stephen Brennan
-
-  @date         Thursday,  8 January 2015
-
-  @brief        LSH (Libstephen SHell)
-
-*******************************************************************************/
 
 #include <sys/wait.h>
 #include <unistd.h>
@@ -16,103 +5,23 @@
 #include <stdio.h>
 #include <string.h>
 
-/*
-  Function Declarations for builtin shell commands:
- */
-int lsh_cd(char **args);
-int lsh_help(char **args);
-int lsh_exit(char **args);
 int PIPE_COUNT = 0;
 
-/*
-  List of builtin commands, followed by their corresponding functions.
- */
-char *builtin_str[] = {
-  "cd",
-  "help",
-  "exit"
-};
-
-int (*builtin_func[]) (char **) = {
-  &lsh_cd,
-  &lsh_help,
-  &lsh_exit
-};
-
-int lsh_num_builtins() {
-  return sizeof(builtin_str) / sizeof(char *);
-}
-
-/*
-  Builtin function implementations.
-*/
-
-/**
-   @brief Bultin command: change directory.
-   @param args List of args.  args[0] is "cd".  args[1] is the directory.
-   @return Always returns 1, to continue executing.
- */
-int lsh_cd(char **args)
+//Method for reading lines
+char *read_line(void)
 {
-  if (args[1] == NULL) {
-    fprintf(stderr, "lsh: expected argument to \"cd\"\n");
-  } else {
-    if (chdir(args[1]) != 0) {
-      perror("lsh");
-    }
-  }
-  return 1;
-}
-
-/**
-   @brief Builtin command: print help.
-   @param args List of args.  Not examined.
-   @return Always returns 1, to continue executing.
- */
-int lsh_help(char **args)
-{
-  int i;
-  printf("Stephen Brennan's LSH\n");
-  printf("Type program names and arguments, and hit enter.\n");
-  printf("The following are built in:\n");
-
-  for (i = 0; i < lsh_num_builtins(); i++) {
-    printf("  %s\n", builtin_str[i]);
-  }
-
-  printf("Use the man command for information on other programs.\n");
-  return 1;
-}
-
-/**
-   @brief Builtin command: exit.
-   @param args List of args.  Not examined.
-   @return Always returns 0, to terminate execution.
- */
-int lsh_exit(char **args)
-{
-  return 0;
-}
-
-
- char *lsh_read_line(void)
- {
    char *line = NULL;
-   ssize_t bufsize = 0; // have getline allocate a buffer for us
+   ssize_t bufsize = 0; 
    getline(&line, &bufsize, stdin);
    return line;
- }
+}
+
 
 #define LSH_TOK_BUFSIZE 64
 #define LSH_TOK_DELIM " \t\r\n\a"
 #define LSH_PIPE_DELIM "|\n"
 
-/**
-   @brief Split a line into tokens (very naively).
-   @param line The line.
-   @return Null-terminated array of tokens.
- */
-
+//Method for tokenizing by pipe char
 char **split_by_pipe(char *line)
 {
   int bufsize = LSH_TOK_BUFSIZE, position = 0;
@@ -146,8 +55,8 @@ char **split_by_pipe(char *line)
   return tokens;
 }
 
-
-char **lsh_split_line(char *line)
+//Method for tokenizing by pipe char
+char **split_by_line(char *line)
 {
   int bufsize = LSH_TOK_BUFSIZE, position = 0;
   char **tokens = malloc(bufsize * sizeof(char*));
@@ -178,10 +87,9 @@ char **lsh_split_line(char *line)
   return tokens;
 }
 
-/**
-   @brief Loop getting input and executing it.
- */
-void lsh_loop(void)
+
+//MAIN LOOP
+int main(int argc, char **argv)
 {
   char *line;
   char **args;
@@ -190,129 +98,85 @@ void lsh_loop(void)
   int status = 1;
 
   do {
+    
     printf("> ");
-    line = lsh_read_line();
+    line = read_line();
     pipe_args = split_by_pipe(line);
     printf("PIPE COUNT: %d\n", PIPE_COUNT);
     
     pid_t pids[PIPE_COUNT];
-    int pipefd[2];
+    int fd[PIPE_COUNT][2]; //Create buffers for all processes
 
-    
 
-    pipe(pipefd);
+    //Fork creation process is modified from https://www.daniweb.com/programming/software-development/threads/261514/linux-shell-multi-piping
 
-    for (int i = 0; i<PIPE_COUNT ; i++) {
+    for (int i = 0; i < PIPE_COUNT ; i++) {
 
-      args = lsh_split_line(pipe_args[i]);
-      //status = lsh_execute(args);
+      args = split_by_line(pipe_args[i]);
 
-      printf("i = %d", i);
+      pipe(fd[i]);
 
-      
-    
+
       //Create processes for each pipe
       if ((pids[i] = fork()) < 0) {
 
         printf("FORK ERROR");
         perror("fork");
         abort();
-      } else if (pids[i] == 0) {
+      } 
 
-       
-        if(PIPE_COUNT == 1){
-          execvp(args[0], args);
-          exit(0);
-        }else{
+      //IN CHILD PROCESS
+      else if ( pids[i] == 0 ) {
+          
+        if(i == 0){ //if the first process, no need to read input from buffer
+            close(fd[0][0]);
+         }else{ //else, read the input from previous process's buffer
+            dup2(fd[i-1][0], 0);
+         }
 
-          if(i == 0){
-          
-          printf("FIRST PROCESS");
-          
-          close(pipefd[0]);
-          dup2(pipefd[1], 1);
-          close(pipefd[1]);
-
-          execvp(args[0], args);
-          exit(0);
-
-        } else if(i == PIPE_COUNT - 1){
-
-            printf("LAST PROCESS");
-    
-            close(pipefd[1]);
-            dup2(pipefd[0], 0);
-            close(pipefd[0]);
-            execvp(args[0], args);
-            exit(0);
-
-        } else{
-          printf("MIDDLE PROCESS");
-          
-          close(pipefd[1]);
-          close(pipefd[0]);
-          dup2(pipefd[0], 0);
-          
-          
-          execvp(args[0], args);
-
-          close(pipefd[0]);
-          close(pipefd[1]);
-          dup2(pipefd[1], 1);
-          
-
-          
-          
-          exit(0);
-          
-        }   
-
-        }
-         
+         if( i == PIPE_COUNT - 1){ //if the last process, no need to write the output to buffer
+            close(fd[i][1]);
+         }else{ // else, write the output to buffer to pass to the next process
+            dup2(fd[i][1], 1); //
+         }
         
+         for (int t = 0; t <= i ; t++) { //close all buffers from current and all previous process buffers
+            close(fd[t][0]);
+            close(fd[t][1]);
+          }
+
+        execvp(args[0], args); //execute the method
+
+        free(args);
+        exit(0); //Make sure to exit to ensure child processes do not go through the loop
         
       }
+      
+    }
 
-       }
-
-      printf("PIPE COUNT: %d\n", PIPE_COUNT);
-     for (int i = 0; i < 2 * PIPE_COUNT ; i++) {
-          close(pipefd[i]);
-      }
-      //close(0);
-      //close(1);
-     
-
-      int n = PIPE_COUNT;
-      int child_status;
-      pid_t pid;
-      while (n > 0) {
-        pid = wait(&child_status);
-        printf("Child with PID %ld exited with status %d \n", (long)pid, child_status);
-        --n;  // TODO(pts): Remove pid from the pids array.
-       }
-
+    int n = PIPE_COUNT;
+    int child_status;
+    pid_t pid;
     
+    //Close any other left out pipe buffer
+    for (int t = 0; t < PIPE_COUNT ; t++) {
+      close(fd[t][0]);
+      close(fd[t][1]);
+    }
 
+    //Wait for all processes to finish
+    while (n > 0) {
+      pid = wait(&child_status);
+      printf("Child with PID %ld exited with status %d \n", (long)pid, child_status);
+       --n; 
+    }
+
+    //Prevent memory leaks
     free(line);
-    // free(args);
-  } while (status);
-}
+    free(pipe_args);
 
-/**
-   @brief Main entry point.
-   @param argc Argument count.
-   @param argv Argument vector.
-   @return status code
- */
-int main(int argc, char **argv)
-{
-  // Load config files, if any.
+  } while (status); 
 
-  // Run command loop.
-  lsh_loop();
-
-  // Perform any shutdown/cleanup.
 
   return EXIT_SUCCESS;
 }
