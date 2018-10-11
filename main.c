@@ -7,16 +7,6 @@
 
 int PIPE_COUNT = 0;
 
-//Method for reading lines
-char *read_line(void)
-{
-   char *line = NULL;
-   ssize_t bufsize = 0; 
-   getline(&line, &bufsize, stdin);
-   return line;
-}
-
-
 #define LSH_TOK_BUFSIZE 64
 #define LSH_TOK_DELIM " \t\r\n\a"
 #define LSH_PIPE_DELIM "|\n"
@@ -91,7 +81,7 @@ char **split_by_line(char *line)
 //MAIN LOOP
 int main(int argc, char **argv)
 {
-  char *line;
+  
   char **args;
   char **pipe_args;
 
@@ -100,7 +90,15 @@ int main(int argc, char **argv)
   do {
     
     printf("> ");
-    line = read_line();
+
+
+    char *line = NULL;
+    size_t bufsize = 0; 
+
+    getline(&line, &bufsize, stdin);
+
+    printf("LINE: %s", line);
+
     pipe_args = split_by_pipe(line);
     printf("PIPE COUNT: %d\n", PIPE_COUNT);
     
@@ -174,9 +172,13 @@ int main(int argc, char **argv)
     //Prevent memory leaks
     free(line);
     free(pipe_args);
+    //free(pids);
+    //free(fd);
 
   } while (status); 
 
 
   return EXIT_SUCCESS;
 }
+
+
