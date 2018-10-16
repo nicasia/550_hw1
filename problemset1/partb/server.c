@@ -109,8 +109,9 @@ void make_socket_non_blocking(int sockfd) {
 
 
 //Worker function to read a file and return the contents
-void * worker_function(int *arg){
-    
+void * worker_function(void *args){
+    int* arg = (int *) args;
+
     //Worker thread lives forever
     while(1){
    
@@ -128,6 +129,7 @@ void * worker_function(int *arg){
       int count;
       if (fptr == NULL){
         strcpy(message, "FILE DOES NOT EXIST");
+        count = sizeof("FILE DOES NOT EXIST");
       }
       else{
     	// Read contents from file
