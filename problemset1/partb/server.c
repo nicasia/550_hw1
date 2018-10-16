@@ -24,7 +24,7 @@
 #define MAXFDS 64
 
 //CONSTANT FOR DEFININIG BUFFER SIZES
-#define CONTENT_SIZE 2000
+#define CONTENT_SIZE 2000000
 #define FILENAME_SIZE 256
 
 // This code has been adapted from https://eli.thegreenplace.net/2017/concurrent-servers-part-3-event-driven/
@@ -123,7 +123,7 @@ void * worker_function(void *args){
   
       int c;
       FILE *fptr;
-      char message[CONTENT_SIZE];
+      char message[CONTENT_SIZE+1];
 
       int ptr = 0;
       fptr = fopen(filename_buffers[*arg], "r");
