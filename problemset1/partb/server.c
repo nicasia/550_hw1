@@ -335,7 +335,7 @@ fd_status_t on_peer_ready_send(int sockfd) {
         memset(filename_buffers[peerstate->worker_thread_id] , 0, sizeof filename_buffers[peerstate->worker_thread_id] );
         memset(filecontent_buffers[peerstate->worker_thread_id] , 0, sizeof filecontent_buffers[peerstate->worker_thread_id] );	
       	
-		filecontent_buffers[peerstate->worker_thread_id][0] = '\0'
+		filecontent_buffers[peerstate->worker_thread_id][0] = '\0';
 		filename_buffers[peerstate->worker_thread_id][0] = '\0';
 		return fd_status_NORW;
     }
