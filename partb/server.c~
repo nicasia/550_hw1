@@ -548,7 +548,8 @@ int main(int argc, const char** argv) {
               perror("epoll_ctl EPOLL_CTL_DEL");
         exit(EXIT_FAILURE);
             }
-            close(fd);
+            int close_stat = close(fd);
+	    printf("Close status is %d", close_stat);
           } else if (epoll_ctl(epollfd, EPOLL_CTL_MOD, fd, &event) < 0) {
             perror("epoll_ctl EPOLL_CTL_MOD");
       exit(EXIT_FAILURE);
