@@ -334,7 +334,7 @@ int main(int argc, const char** argv) {
   const char* addressnum = "127.0.0.1"; //default address
   int portnum = 9000; //default port
   
-  if (argc >= 2) {
+  if (argc >= 3) {
     addressnum = argv[1];
     portnum = atoi(argv[2]);
   }
