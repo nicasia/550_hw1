@@ -319,7 +319,9 @@ fd_status_t on_peer_ready_send(int sockfd) {
         			if(i == byte - 1){
        					puts("NOW I CAN SEND");
        					puts(filecontent_buffers[peerstate->worker_thread_id]);
-       					break; //NOW, we have the filename, we can send the msg
+					peerstate-> filename_read = 1;
+       					return fd_status_W;
+					break; //NOW, we have the filename, we can send the msg
        
     				}
       			}     
@@ -379,7 +381,7 @@ int main(int argc, const char** argv) {
 
   setvbuf(stdout, NULL, _IONBF, 0);
 
-  int portnum = 9090; //default port
+  int portnum = 5423; //default port
   
   if (argc >= 2) {
     portnum = atoi(argv[1]);
