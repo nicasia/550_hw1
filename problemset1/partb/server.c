@@ -34,6 +34,7 @@ pthread_t threads[MAX_CONN]; //list of worker threads
 pthread_cond_t conditions[MAX_CONN] = {PTHREAD_COND_INITIALIZER}; //condition variables for each thread
 pthread_mutex_t locks[MAX_CONN] = {PTHREAD_MUTEX_INITIALIZER}; //lock for each thread
 int filename_ptr_ends[MAX_CONN] = {0};
+int filecontent_ptr_ends[MAX_CONN] = {0};
 char filename_buffers[MAX_CONN][FILENAME_SIZE]; //list of filename buffers for each thread
 
 
@@ -277,11 +278,18 @@ fd_status_t on_peer_ready_send(int sockfd) {
   	if(peerstate-> filename_read == 0){
   
 		char buf[CONTENT_SIZE];
-		
-    		int byte = read(thread_pipes[peerstate->worker_thread_id][0], filecontent_buffers[peerstate->worker_thread_id], sizeof filecontent_buffers[peerstate->worker_thread_id]);
+
+    int byte = read(thread_pipes[peerstate->worker_thread_id][0], buf, sizeof buf);
     
     		if(byte > 0){
       			for(int i = 0; i < byte; i++){
+              if (buf[i] == '\0') {
+                peerstate-> filename_read = 1;
+                return fd_status_W; //NOW, we have the filename, we can send the msg
+              } else {
+                filecontent_buffers[peerstate->worker_thread_id][filecontent_ptr_ends[peerstate->worker_thread_id]] = buf[i];
+                filecontent_ptr_ends[peerstate->worker_thread_id]++;
+              }
         			if(i == byte - 1){
                 peerstate-> filename_read = 1;
        					return fd_status_W;
@@ -318,6 +326,7 @@ fd_status_t on_peer_ready_send(int sockfd) {
    			peerstate-> filename_read = 0;
         worker_thread_stats[peerstate->worker_thread_id] = 0; 
         filename_ptr_ends[peerstate->worker_thread_id] = 0;
+        filecontent_ptr_ends[peerstate->worker_thread_id] = 0;
         memset(filename_buffers[peerstate->worker_thread_id] , 0, sizeof filename_buffers[peerstate->worker_thread_id] );
         memset(filecontent_buffers[peerstate->worker_thread_id] , 0, sizeof filecontent_buffers[peerstate->worker_thread_id] );	
       	return fd_status_NORW;
