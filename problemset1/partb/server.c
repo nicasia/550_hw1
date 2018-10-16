@@ -293,13 +293,13 @@ fd_status_t on_peer_ready_send(int sockfd) {
         			if(i == byte - 1){
                 peerstate-> filename_read = 1;
        					return fd_status_W;
-                break; //NOW, we have the filename, we can send the msg
+                //break; //NOW, we have the filename, we can send the msg
     				  }
       			}    
     		} else{
             return fd_status_W;
         }
-    		peerstate-> filename_read = 1; //update filename read status
+    		//peerstate-> filename_read = 1; //update filename read status
   	} else {
   		  int sendlen = sizeof filecontent_buffers[peerstate->worker_thread_id];
     		int nsent = send(sockfd, filecontent_buffers[peerstate->worker_thread_id], sendlen, 0);
