@@ -30,18 +30,18 @@
 // This code has been adapted from https://eli.thegreenplace.net/2017/concurrent-servers-part-3-event-driven/
 
 //DEFINE NECESSARY STRUCTURES FOR THREADS
-pthread_t threads[MAX_CONN]; //list of worker threads
+pthread_t threads[MAX_CONN]={0}; //list of worker threads
 pthread_cond_t conditions[MAX_CONN] = {PTHREAD_COND_INITIALIZER}; //condition variables for each thread
 pthread_mutex_t locks[MAX_CONN] = {PTHREAD_MUTEX_INITIALIZER}; //lock for each thread
 int filename_ptr_ends[MAX_CONN] = {0};
 int filecontent_ptr_ends[MAX_CONN] = {0};
-char filename_buffers[MAX_CONN][FILENAME_SIZE]; //list of filename buffers for each thread
+char filename_buffers[MAX_CONN][FILENAME_SIZE]={0}; //list of filename buffers for each thread
 
 
-char filecontent_buffers[MAX_CONN][CONTENT_SIZE]; //list of file content buffers for each thread
+char filecontent_buffers[MAX_CONN][CONTENT_SIZE] = {0}; //list of file content buffers for each thread
 int  thread_ids[MAX_CONN] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}; //id for each thread
 int worker_thread_stats[MAX_CONN] = {0}; //list of keeping track of worker thread availability (0=available, 1=busy)
-int thread_pipes[MAX_CONN][2]; //communication pipes for each thread
+int thread_pipes[MAX_CONN][2] = {0}; //communication pipes for each thread
 
 
 //Method for printing which client has connected to the server
