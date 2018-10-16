@@ -125,17 +125,18 @@ void * worker_function(int *arg){
       puts("MESSAGE IS");
       //puts(filename_buffers[*arg]);
       FILE *fptr;
-      char message[1000];
-      
+      char message[CONTENT_SIZE];
+
+      int ptr = 0;
       fptr = fopen(filename_buffers[*arg], "r");
-      
+      int count;
       if (fptr == NULL){
         strcpy(message, "FILE DOES NOT EXIST");
       }
       else{
     	// Read contents from file
         c = fgetc(fptr);
-        int count = 0;
+        count = 0;
         while (c != EOF)
         {
           message[count] = c;
@@ -147,8 +148,10 @@ void * worker_function(int *arg){
       }
        
       puts(message);
+      //close(thread_pipes[*arg][0]);
       //Write file content to shared pipe
-      write(thread_pipes[*arg][1], message, sizeof message); 
+      write(thread_pipes[*arg][1], message, count); 
+      //close(thread_pipes[*arg][1]);
     } 
 }
 
@@ -358,6 +361,7 @@ fd_status_t on_peer_ready_send(int sockfd) {
                 	worker_thread_stats[peerstate->worker_thread_id] = 0; 
 			filename_ptr_ends[peerstate->worker_thread_id] = 0;
 			memset(filename_buffers[peerstate->worker_thread_id] , 0, sizeof filename_buffers[peerstate->worker_thread_id] );
+			memset(filecontent_buffers[peerstate->worker_thread_id] , 0, sizeof filecontent_buffers[peerstate->worker_thread_id] );	
 			//filename_buffers[peerstate->worker_thread_id] = {'\0'};
     			//write(thread_pipes[peerstate->worker_thread_id][1], '/0', 0);
       			return fd_status_NORW;
