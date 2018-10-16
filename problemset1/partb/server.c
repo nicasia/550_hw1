@@ -14,7 +14,7 @@
 #include <stdint.h>
 #include <sys/epoll.h>
 #include <unistd.h>
-
+#include <arpa/inet.h>
 
 #define N_BACKLOG 64
 
@@ -55,7 +55,7 @@ void report_peer_connected(const struct sockaddr_in* sa, socklen_t salen) {
 }
 
 //Method for opening a socket connection
-int listen_inet_socket(int portnum, char* addressnum) {
+int listen_inet_socket(int portnum, const char* addressnum) {
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) {
     perror("ERROR opening socket");
@@ -119,7 +119,7 @@ void * worker_function(int *arg){
       pthread_cond_wait(&conditions[*arg], &locks[*arg]); 
       pthread_mutex_unlock(&locks[*arg]); 
   
-      char *c;
+      int c;
       FILE *fptr;
       char message[CONTENT_SIZE];
 
@@ -331,7 +331,7 @@ int main(int argc, const char** argv) {
 
   setvbuf(stdout, NULL, _IONBF, 0);
 
-  char* addressnum = "127.0.0.1"; //default address
+  const char* addressnum = "127.0.0.1"; //default address
   int portnum = 9000; //default port
   
   if (argc >= 2) {
