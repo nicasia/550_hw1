@@ -46,8 +46,8 @@ int thread_pipes[MAX_CONN][2] = {0}; //communication pipes for each thread
 
 //Method for printing which client has connected to the server
 void report_peer_connected(const struct sockaddr_in* sa, socklen_t salen) {
-  char hostbuf[256] = {0};
-  char portbuf[256] = {0};
+  char hostbuf[256];
+  char portbuf[256];
   if (getnameinfo((struct sockaddr*)sa, salen, hostbuf, 256, portbuf,256, 0) == 0) {
     printf("peer (%s, %s) connected\n", hostbuf, portbuf);
   } else {
@@ -335,7 +335,7 @@ fd_status_t on_peer_ready_send(int sockfd) {
         memset(filename_buffers[peerstate->worker_thread_id] , 0, sizeof filename_buffers[peerstate->worker_thread_id] );
         memset(filecontent_buffers[peerstate->worker_thread_id] , 0, sizeof filecontent_buffers[peerstate->worker_thread_id] );	
       	
-		filecontent_buffers[peerstate->worker_thread_id][0] = '\0';
+		filecontent_buffers[peerstate->worker_thread_id][0] = '\0'
 		filename_buffers[peerstate->worker_thread_id][0] = '\0';
 		return fd_status_NORW;
     }
