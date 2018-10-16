@@ -1,4 +1,4 @@
 550server: server.c
-	gcc -lpthread server.c -o 550server
+	gcc -lpthread -std=c99 server.c -o 550server
 clean:
 	rm 

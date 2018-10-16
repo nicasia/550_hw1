@@ -55,7 +55,7 @@ void report_peer_connected(const struct sockaddr_in* sa, socklen_t salen) {
 }
 
 //Method for opening a socket connection
-int listen_inet_socket(int portnum, char addressnum) {
+int listen_inet_socket(int portnum, char* addressnum) {
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) {
     perror("ERROR opening socket");
@@ -331,7 +331,7 @@ int main(int argc, const char** argv) {
 
   setvbuf(stdout, NULL, _IONBF, 0);
 
-  char addressnum = '127.0.0.1'; //default address
+  char* addressnum = "127.0.0.1"; //default address
   int portnum = 9000; //default port
   
   if (argc >= 2) {
