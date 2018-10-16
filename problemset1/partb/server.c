@@ -245,6 +245,10 @@ fd_status_t on_peer_ready_recv(int sockfd, struct epoll_event *event) {
 		        //break;
     		  case IN_MSG:
             if (buf[i] == '\n') { //message has ended
+					int index = peerstate->worker_thread_id;
+
+					  filename_buffers[index][filename_ptr_ends[index]] = '\0';
+					  // filename_ptr_ends[index] = filename_ptr_ends[index] + 1;
   				    ready_to_send = true; //Message ended, now we can send
 				      //Signal the worker function that filename is complete, execution can start  					
 				      pthread_mutex_lock(&locks[peerstate->worker_thread_id]); 
@@ -284,6 +288,7 @@ fd_status_t on_peer_ready_send(int sockfd) {
     		if(byte > 0){
       			for(int i = 0; i < byte; i++){
               if (buf[i] == '\0') {
+				filecontent_buffers[peerstate->worker_thread_id][filecontent_ptr_ends[peerstate->worker_thread_id]] ='\0';
                 peerstate-> filename_read = 1;
                 return fd_status_W; //NOW, we have the filename, we can send the msg
               } else {
