@@ -204,9 +204,9 @@ fd_status_t on_peer_connected(int sockfd, const struct sockaddr_in* peer_addr,
                 	return fd_status_R; //now we can receive
   		}
   	}
-  //No available worker thread left, we can close the socket
+  //No available workexr thread left, we can close the socket
   printf("No available thread exists for client");
-  printf("socket %d closing\n", sockfd);
+  //printf("socket %d closing\n", sockfd);
   return fd_status_NORW; //we do not want to receive or send anymore
 }
 
@@ -306,6 +306,8 @@ fd_status_t on_peer_ready_send(int sockfd) {
   	//if filename is not read yet, read it from pipe
   	if(peerstate-> filename_read == 0){
   
+		char buf[CONTENT_SIZE];
+		
     		int byte = read(thread_pipes[peerstate->worker_thread_id][0], filecontent_buffers[peerstate->worker_thread_id], sizeof filecontent_buffers[peerstate->worker_thread_id]);
     		//puts("READ CALLED...");
     		//printf("%d", byte);
@@ -515,7 +517,7 @@ int main(int argc, const char** argv) {
             event.events |= EPOLLOUT;
           }
           if (event.events == 0) {
-            printf("socket %d closing\n", fd);
+            //printf("socket %d closing\n", fd);
             if (epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, NULL) < 0) {
               perror("epoll_ctl EPOLL_CTL_DEL");
               exit(EXIT_FAILURE);
